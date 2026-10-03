@@ -87,11 +87,23 @@
       <p class="big">🎂 🎉 ✨</p>
       <button class="btn" id="voiceBtn" hidden>🎙️</button>
       <audio id="voice" preload="none"></audio>
+      <button class="btn ghost" id="souvenirBtn" hidden>🌸 Open your souvenir</button>
       <button class="btn" id="afterLine"></button>
-      <button class="btn ghost" data-go="4">Read the letter again</button>
     </div>
   </section>
 </main>
+<div id="souvenir" hidden>
+  <div class="sv-card">
+    <p class="small">Your little souvenir</p>
+    <canvas id="svCanvas" width="540" height="675" hidden></canvas>
+    <small id="svHint">Making your souvenir…</small>
+    <div class="sv-actions">
+      <button class="btn" id="svSave" disabled>Save as picture</button>
+      <button class="btn" id="svGif" disabled>Save as GIF</button>
+      <button class="btn ghost" id="svClose">Close</button>
+    </div>
+  </div>
+</div>
 <audio id="audio" loop preload="none"></audio>
 <script src="script.js"></script>
 </body>
