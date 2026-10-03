@@ -9,6 +9,13 @@ birthdayFrom: "From: Raiven ❤️",
   unlockAt: "2026-10-07T00:00:00+08:00", // when the Open button unlocks (+08:00 = Philippines time)
   lockText: "Opens on October 7 🎂",
   previewKey: "raiven-test",          // for testing: add ?preview=raiven-test to the link to skip the lock
+  souvenirPhotos: [   // the bouquet: up to 6 pictures, one per flower. The first one goes in the biggest, middle flower.
+    "assets/images/photo1.jpg", "assets/images/photo5.jpg", "assets/images/photo9.jpg",
+    "assets/images/photo14.jpg", "assets/images/photo19.jpg", "assets/images/photo22.jpg"
+  ],
+  souvenirTitle: "Happy 22nd Birthday",
+  souvenirDate: "October 7, 2026",
+  souvenirFrom: "From Raiven",
   typeSpeed: 40,     // letter typing: milliseconds per character (higher = slower)
   musicVolume: 0.6,  // normal song volume (0 to 1)
   duckVolume: 0.12,  // song volume while the voice note plays
@@ -160,7 +167,11 @@ function show(n, push = true) {
   screens[n].scrollTop = 0;
   if (n === 1) { burst(); hearts(24); }
   if (n === 4 && round === 2) startLoveGame();
-  if (n === 5) { burst(); $("#afterLine").hidden = round === 2; $("#voiceBtn").hidden = !(voiceOK && gameWon); }
+  if (n === 5) {
+    burst(); $("#afterLine").hidden = round === 2; $("#voiceBtn").hidden = !(voiceOK && gameWon);
+    $("#souvenirBtn").hidden = !gameWon;
+    if (round === 2 && gameWon && !svShown) { svShown = true; setTimeout(openSouvenir, 1200); }   // pops up once after the minigame
+  }
 }
 document.querySelectorAll("[data-go]").forEach(b => b.onclick = () => {
   const n = +b.dataset.go;
@@ -210,6 +221,7 @@ function startLoveGame() {           // round 2: find every "love" to unlock the
 }
 function loveWin() {
   gameWon = true; if (voiceOK) $("#voiceBtn").hidden = false;
+  makeSouvenir().catch(() => {});             // prepare the souvenir picture in the background
   clearTimeout(hintT); $("#loveCount").hidden = true; burst(); hearts(24);
   const r = $("#letterReveal"); r.hidden = false;
   setTimeout(() => r.scrollIntoView({behavior: "smooth", block: "center"}), 300);
@@ -293,6 +305,262 @@ const voiceDone = () => {
 };
 voice.onpause = voiceDone; voice.onended = voiceDone;
 voice.onerror = () => { voiceOK = false; vBtn.hidden = true; };
+// souvenir: a flower with her photo in the middle, drawn on a canvas so it can be saved as a picture
+let svShown = false, svBlob = null, svP = null;
+const loadImg = src => new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
+function drawSouvenir(g, W, H, photos, layer = "all") {   // layer: "bg", "bouquet" or "all"
+  const ROSE = "#a31d43", ROSE2 = "#e8607a", TAU = Math.PI * 2;
+  const grad = (x0, y0, x1, y1, st) => { const q = g.createLinearGradient(x0, y0, x1, y1); st.forEach(([o, c]) => q.addColorStop(o, c)); return q; };
+  const shadow = (c, b, y = 0, x = 0) => { g.shadowColor = c; g.shadowBlur = b; g.shadowOffsetY = y; g.shadowOffsetX = x; };
+  const noShadow = () => { g.shadowColor = "transparent"; g.shadowBlur = 0; g.shadowOffsetX = g.shadowOffsetY = 0; };
+  const rr = (x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
+  const heart = (x, y, s, col) => {
+    g.save(); g.translate(x, y); g.scale(s / 34, s / 34); g.beginPath();
+    for (let i = 0; i <= 120; i++) { const t = i / 120 * TAU, px = 16 * Math.sin(t) ** 3, py = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)); i ? g.lineTo(px, py) : g.moveTo(px, py); }
+    g.closePath(); g.fillStyle = col; g.fill(); g.restore();
+  };
+  if (layer !== "bouquet") {
+  g.fillStyle = grad(0, 0, 0, H, [[0, "#ffe2e8"], [1, "#fff6f0"]]); g.fillRect(0, 0, W, H);
+  const sp = g.createRadialGradient(540, 650, 40, 540, 650, 560); sp.addColorStop(0, "rgba(255,255,255,.75)"); sp.addColorStop(1, "rgba(255,255,255,0)");
+  g.fillStyle = sp; g.fillRect(0, 0, W, H);                       // soft light behind the bouquet
+  g.lineWidth = 6; g.strokeStyle = ROSE2; rr(40, 40, W - 80, H - 80, 56); g.stroke();
+  g.lineWidth = 2; g.strokeStyle = "#f4aab9"; rr(58, 58, W - 116, H - 116, 44); g.stroke();
+  [[130, 140, 34, "#f4aab9"], [950, 150, 26, "#f4aab9"], [100, 330, 22, "#fac8d2"], [985, 345, 30, "#fabece"], [105, 1000, 28, "#f4aab9"], [975, 1010, 24, "#fac8d2"]].forEach(a => heart(...a));
+  g.textAlign = "center"; g.textBaseline = "middle";
+  g.fillStyle = ROSE; g.font = "italic 400 70px Fraunces, Georgia, serif"; g.fillText(CONFIG.souvenirTitle, W / 2, 128);
+  g.fillStyle = ROSE2; g.font = "500 76px Caveat, cursive"; g.fillText(CONFIG.name, W / 2, 198);
+  g.fillStyle = "#783c52"; g.font = "italic 400 44px Fraunces, Georgia, serif"; g.fillText(CONFIG.souvenirDate, W / 2, 1200);
+  g.fillStyle = ROSE; g.font = "500 56px Caveat, cursive"; g.fillText(CONFIG.souvenirFrom, W / 2, 1252);
+  }
+  if (layer === "bg") return;
+
+  const BX = 540, BY = 960;
+  const PAL = {
+    rose: ["#f9a0b3", "#d94868", "#ffd3dc", "#f48aa0"], lav: ["#d6baf7", "#9366d6", "#f0e5ff", "#c9a9f0"],
+    peach: ["#ffc4a0", "#e57a48", "#ffe6d8", "#ffb48f"], pink: ["#ffb8cb", "#f0608a", "#ffe8ee", "#ffa9c0"],
+    sun: ["#ffe29b", "#e8a52f", "#fff3cf", "#ffd477"], red: ["#f98098", "#c42a4c", "#ffc0cc", "#f06c86"]
+  };
+  const F = [[540, 430, 88, PAL.lav, 1], [330, 555, 88, PAL.peach, 2], [750, 555, 88, PAL.pink, 3], [400, 770, 82, PAL.sun, 4], [680, 770, 82, PAL.red, 5], [540, 640, 100, PAL.rose, 0]];
+  [[255, 400, 13], [830, 400, 13], [225, 650, 11], [855, 650, 11], [300, 900, 12], [780, 900, 12], [470, 300, 10], [610, 300, 10], [215, 760, 9], [865, 760, 9]].forEach(([x, y, r]) => {
+    const d = g.createRadialGradient(x - r * .3, y - r * .3, 1, x, y, r); d.addColorStop(0, "#fff"); d.addColorStop(1, "#f6d3dc");
+    shadow("rgba(120,30,60,.25)", 8, 4); g.fillStyle = d; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); noShadow();
+  });
+  // ground shadow
+  shadow("rgba(120,30,60,.35)", 30, 0); g.fillStyle = "rgba(120,30,60,.22)"; g.beginPath(); g.ellipse(BX, 1160, 120, 15, 0, 0, TAU); g.fill(); noShadow();
+  // stems (dark base + light highlight)
+  g.lineCap = "round";
+  F.forEach(([x, y]) => {
+    const path = o => { g.beginPath(); g.moveTo(x + o, y); g.bezierCurveTo(x + o, y + (BY - y) * .55, BX + (x - BX) * .15 + o, BY - 120, BX + o, BY + 15); };
+    shadow("rgba(30,70,40,.3)", 8, 4); g.strokeStyle = "#467f55"; g.lineWidth = 16; path(0); g.stroke(); noShadow();
+    g.strokeStyle = "#7dbb86"; g.lineWidth = 6; path(-3); g.stroke();
+  });
+  const leaf = (a, len) => {
+    g.save(); g.translate(BX, BY); g.rotate(a);
+    shadow("rgba(30,70,40,.35)", 14, 6);
+    g.beginPath(); g.moveTo(0, 0); g.quadraticCurveTo(-48, -len * .5, 0, -len); g.quadraticCurveTo(48, -len * .5, 0, 0);
+    g.fillStyle = grad(-45, 0, 45, 0, [[0, "#4f9061"], [.5, "#8ccf97"], [1, "#5da16e"]]); g.fill(); noShadow();
+    g.strokeStyle = "rgba(255,255,255,.4)"; g.lineWidth = 3; g.beginPath(); g.moveTo(0, -8); g.lineTo(0, -len * .85); g.stroke(); g.restore();
+  };
+  [[-1.15, 250], [-.75, 290], [.75, 290], [1.15, 250]].forEach(a => leaf(...a));
+  // petals: each layer casts a shadow on the one below it
+  F.forEach(([x, y, R, c]) => {
+    const k = R / 165;
+    const petal = (a, dist, rx, ry, c0, c1) => {
+      g.save(); g.translate(x, y); g.rotate(a);
+      shadow("rgba(110,20,50,.30)", 14 * k + 4, 7 * k + 2);
+      g.fillStyle = grad(0, -(dist + ry) * k, 0, -(dist - ry) * k, [[0, c0], [1, c1]]);
+      g.beginPath(); g.ellipse(0, -dist * k, rx * k, ry * k, 0, 0, TAU); g.fill(); noShadow();
+      g.strokeStyle = "rgba(120,20,60,.16)"; g.lineWidth = 2; g.stroke();
+      g.fillStyle = "rgba(255,255,255,.30)"; g.beginPath(); g.ellipse(-rx * k * .18, -dist * k - ry * k * .12, rx * k * .3, ry * k * .62, 0, 0, TAU); g.fill();
+      g.restore();
+    };
+    for (let i = 0; i < 12; i++) petal(i * Math.PI / 6, 215, 74, 125, c[1], c[0]);
+    for (let i = 0; i < 12; i++) petal(i * Math.PI / 6 + Math.PI / 12, 195, 62, 105, c[3], c[2]);
+  });
+  // pictures: glass domes with a bevelled ring
+  F.forEach(([x, y, R, , pi]) => {
+    const photo = photos && photos[pi];
+    shadow("rgba(90,10,40,.5)", 30, 14); g.fillStyle = "#fff"; g.beginPath(); g.arc(x, y, R + 6, 0, TAU); g.fill(); noShadow();
+    g.save(); g.beginPath(); g.arc(x, y, R, 0, TAU); g.clip();
+    if (photo) { const s = Math.max(2 * R / photo.width, 2 * R / photo.height), w = photo.width * s, h = photo.height * s; g.drawImage(photo, x - w / 2, y - h / 2, w, h); }
+    else { g.fillStyle = "#ffd9e1"; g.fillRect(x - R, y - R, 2 * R, 2 * R); heart(x, y + 4, R * .75, ROSE2); }
+    const v = g.createRadialGradient(x - R * .2, y - R * .25, R * .35, x, y, R); v.addColorStop(0, "rgba(255,255,255,0)"); v.addColorStop(1, "rgba(60,0,30,.32)");
+    g.fillStyle = v; g.fillRect(x - R, y - R, 2 * R, 2 * R);
+    g.fillStyle = grad(x - R, y - R, x + R * .2, y + R * .2, [[0, "rgba(255,255,255,.5)"], [1, "rgba(255,255,255,0)"]]);
+    g.beginPath(); g.ellipse(x - R * .28, y - R * .5, R * .55, R * .28, -.6, 0, TAU); g.fill();
+    g.restore();
+    g.lineWidth = 12; g.strokeStyle = grad(x - R, y - R, x + R, y + R, [[0, "#ffffff"], [.5, "#ffe9ef"], [1, "#efa9ba"]]); g.beginPath(); g.arc(x, y, R, 0, TAU); g.stroke();
+    g.lineWidth = 3; g.strokeStyle = "rgba(90,10,40,.18)"; g.beginPath(); g.arc(x, y, R - 7, 0, TAU); g.stroke();
+  });
+  // wrapping paper: shaded cone with fold strips and a lit rim
+  const wrap = () => { g.beginPath(); g.moveTo(385, 915); g.quadraticCurveTo(540, 975, 695, 915); g.lineTo(590, 1145); g.quadraticCurveTo(540, 1168, 490, 1145); g.closePath(); };
+  shadow("rgba(120,30,60,.4)", 24, 10); wrap(); g.fillStyle = grad(385, 0, 695, 0, [[0, "#f3a9bc"], [.3, "#fff0e8"], [.65, "#ffdfe4"], [1, "#e99bb0"]]); g.fill(); noShadow();
+  g.save(); wrap(); g.clip();
+  g.fillStyle = grad(0, 915, 0, 1165, [[0, "rgba(255,255,255,.35)"], [1, "rgba(200,60,100,.22)"]]); g.fillRect(380, 900, 320, 280);
+  g.fillStyle = "rgba(200,80,110,.14)"; g.beginPath(); g.moveTo(470, 940); g.lineTo(520, 1160); g.lineTo(440, 1160); g.closePath(); g.fill();
+  g.beginPath(); g.moveTo(610, 940); g.lineTo(560, 1160); g.lineTo(650, 1160); g.closePath(); g.fill();
+  g.restore();
+  wrap(); g.lineWidth = 4; g.strokeStyle = ROSE2; g.lineJoin = "round"; g.stroke();
+  g.strokeStyle = "rgba(255,255,255,.75)"; g.lineWidth = 5; g.beginPath(); g.moveTo(392, 922); g.quadraticCurveTo(540, 980, 688, 922); g.stroke();
+  // bow
+  [-1, 1].forEach(d => {
+    g.save(); g.translate(BX, 965); g.rotate(d * .45); shadow("rgba(90,10,40,.4)", 12, 6);
+    g.fillStyle = grad(0, -32, 0, 32, [[0, "#f98098"], [1, "#c93a5c"]]); g.beginPath(); g.ellipse(d * 56, 0, 60, 32, 0, 0, TAU); g.fill(); noShadow();
+    g.fillStyle = "rgba(120,10,50,.28)"; g.beginPath(); g.ellipse(d * 56, 3, 34, 15, 0, 0, TAU); g.fill();
+    g.strokeStyle = "rgba(255,255,255,.4)"; g.lineWidth = 3; g.beginPath(); g.ellipse(d * 56, -2, 50, 24, 0, Math.PI * 1.1, Math.PI * 1.8); g.stroke(); g.restore();
+  });
+  shadow("rgba(90,10,40,.35)", 8, 5); g.strokeStyle = "#e8607a"; g.lineWidth = 12;
+  g.beginPath(); g.moveTo(BX - 6, 980); g.quadraticCurveTo(BX - 40, 1040, BX - 72, 1088); g.moveTo(BX + 6, 980); g.quadraticCurveTo(BX + 40, 1040, BX + 72, 1088); g.stroke(); noShadow();
+  const kn = g.createRadialGradient(BX - 7, 958, 2, BX, 965, 22); kn.addColorStop(0, "#f98098"); kn.addColorStop(1, "#b02f50");
+  shadow("rgba(90,10,40,.4)", 8, 4); g.fillStyle = kn; g.beginPath(); g.arc(BX, 965, 21, 0, TAU); g.fill(); noShadow();
+}
+async function loadAny(path) {   // .jpg, .jpeg, .png, .webp or .gif: whichever exists
+  const base = path.replace(/\.\w+$/, "");
+  for (const ext of [path.split(".").pop().toLowerCase(), "jpg", "jpeg", "png", "webp", "gif"]) {
+    const i = await loadImg(`${base}.${ext}`); if (i) return i;
+  }
+  return null;
+}
+// ---- animated souvenir: the bouquet sways, hearts float up, sparkles twinkle (also used for the GIF)
+let svLayers = null, svRAF = 0;
+function miniHeart(g, x, y, w, a) {
+  g.save(); g.globalAlpha = a; g.fillStyle = "#f48aa0"; g.translate(x, y); g.scale(w / 34, w / 34); g.beginPath();
+  for (let i = 0; i <= 60; i++) { const t = i / 60 * Math.PI * 2, px = 16 * Math.sin(t) ** 3, py = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)); i ? g.lineTo(px, py) : g.moveTo(px, py); }
+  g.fill(); g.restore();
+}
+function sparkle(g, x, y, r, a) {
+  if (a < .03) return;
+  g.save(); g.globalAlpha = a; g.fillStyle = "#fff"; g.shadowColor = "#ff8fae"; g.shadowBlur = r; g.beginPath();
+  g.moveTo(x, y - r); g.quadraticCurveTo(x, y, x + r, y); g.quadraticCurveTo(x, y, x, y + r); g.quadraticCurveTo(x, y, x - r, y); g.quadraticCurveTo(x, y, x, y - r); g.fill(); g.restore();
+}
+function composeFrame(g, W, H, t, fx = true) {
+  const s = W / 1080, ph = t * Math.PI * 2;
+  g.clearRect(0, 0, W, H); g.drawImage(svLayers.bg, 0, 0, W, H);
+  if (fx) for (let i = 0; i < 7; i++) { const d = (t + i / 7) % 1; miniHeart(g, (150 + i * 130 + Math.sin(ph + i) * 18) * s, (1120 - d * 900) * s, (20 + (i % 3) * 8) * s, .6 * Math.sin(Math.PI * d)); }
+  g.save(); g.translate(540 * s, 1150 * s); if (fx) { g.rotate(Math.sin(ph) * .022); const b = 1 + .01 * Math.sin(ph * 2); g.scale(b, b); } g.translate(-540 * s, -1150 * s);
+  g.drawImage(svLayers.bouquet, 0, 0, W, H); g.restore();
+  if (fx) [[250, 330], [830, 300], [180, 560], [900, 590], [300, 880], [790, 900], [540, 255], [640, 330]].forEach(([x, y], i) => sparkle(g, x * s, y * s, (10 + 14 * Math.max(0, Math.sin(ph * 2 + i * 1.3))) * s, Math.max(0, Math.sin(ph * 2 + i * 1.3))));
+}
+function startSvAnim() {
+  cancelAnimationFrame(svRAF);
+  const cv = $("#svCanvas"), g = cv.getContext("2d"), t0 = performance.now();
+  if (matchMedia("(prefers-reduced-motion:reduce)").matches) { composeFrame(g, cv.width, cv.height, 0, false); return; }
+  const loop = now => { if ($("#souvenir").hidden) return; composeFrame(g, cv.width, cv.height, ((now - t0) / 3000) % 1); svRAF = requestAnimationFrame(loop); };
+  svRAF = requestAnimationFrame(loop);
+}
+// ---- tiny GIF encoder (no libraries)
+function gifLZW(idx) {
+  const clear = 256, eoi = 257; let size = 9, next = 258, dict = new Map(), cur = 0, bits = 0; const out = [];
+  const emit = c => { cur |= c << bits; bits += size; while (bits >= 8) { out.push(cur & 255); cur >>= 8; bits -= 8; } };
+  emit(clear); let p = idx[0];
+  for (let i = 1; i < idx.length; i++) {
+    const k = idx[i], key = p * 256 + k, v = dict.get(key);
+    if (v !== undefined) { p = v; continue; }
+    emit(p);
+    if (next < 4096) { dict.set(key, next++); if (next - 1 === (1 << size) && size < 12) size++; }
+    else { emit(clear); dict.clear(); size = 9; next = 258; }
+    p = k;
+  }
+  emit(p); emit(eoi); if (bits > 0) out.push(cur & 255);
+  const res = [8];
+  for (let i = 0; i < out.length; i += 255) { const n = Math.min(255, out.length - i); res.push(n); for (let j = 0; j < n; j++) res.push(out[i + j]); }
+  res.push(0); return Uint8Array.from(res);
+}
+async function encodeGif(frames, W, H, delay, onProgress) {
+  const cnt = new Uint32Array(4096), sr = new Uint32Array(4096), sg = new Uint32Array(4096), sb = new Uint32Array(4096);
+  [0, frames.length / 3 | 0, 2 * frames.length / 3 | 0].forEach(fi => {
+    const d = frames[fi];
+    for (let i = 0; i < d.length; i += 12) { const r = d[i], g = d[i + 1], b = d[i + 2], k = (r >> 4 << 8) | (g >> 4 << 4) | (b >> 4); cnt[k]++; sr[k] += r; sg[k] += g; sb[k] += b; }
+  });
+  const keys = [...cnt.keys()].filter(k => cnt[k]).sort((a, b) => cnt[b] - cnt[a]).slice(0, 256);
+  const pal = keys.map(k => [sr[k] / cnt[k] | 0, sg[k] / cnt[k] | 0, sb[k] / cnt[k] | 0]);
+  while (pal.length < 256) pal.push([0, 0, 0]);
+  const map = new Int16Array(4096).fill(-1);
+  const nearest = (r, g, b) => { let best = 0, bd = 1e9; for (let i = 0; i < keys.length; i++) { const q = pal[i], d = (q[0] - r) ** 2 + (q[1] - g) ** 2 + (q[2] - b) ** 2; if (d < bd) { bd = d; best = i; } } return best; };
+  const head = [], w16 = n => head.push(n & 255, n >> 8);
+  head.push(...[..."GIF89a"].map(c => c.charCodeAt(0))); w16(W); w16(H); head.push(0xF7, 0, 0);
+  pal.forEach(q => head.push(q[0], q[1], q[2]));
+  head.push(0x21, 0xFF, 0x0B, ...[..."NETSCAPE2.0"].map(c => c.charCodeAt(0)), 3, 1, 0, 0, 0);
+  const parts = [Uint8Array.from(head)];
+  for (let f = 0; f < frames.length; f++) {
+    const d = frames[f], idx = new Uint8Array(W * H);
+    for (let i = 0, p = 0; i < idx.length; i++, p += 4) {
+      const r = d[p], g = d[p + 1], b = d[p + 2], k = (r >> 4 << 8) | (g >> 4 << 4) | (b >> 4);
+      let m = map[k]; if (m < 0) m = map[k] = nearest(r, g, b); idx[i] = m;
+    }
+    const fh = []; const w = n => fh.push(n & 255, n >> 8);
+    fh.push(0x21, 0xF9, 4, 0); w(delay); fh.push(0, 0, 0x2C); w(0); w(0); w(W); w(H); fh.push(0);
+    parts.push(Uint8Array.from(fh), gifLZW(idx));
+    if (onProgress) { onProgress((f + 1) / frames.length); await new Promise(r => setTimeout(r)); }
+  }
+  parts.push(Uint8Array.from([0x3B]));
+  return new Blob(parts, {type: "image/gif"});
+}
+
+async function shareOrDownload(blob, name, type) {
+  const file = new File([blob], name, {type});
+  if (navigator.canShare && navigator.canShare({files: [file]})) {
+    try { await navigator.share({files: [file], title: "Birthday souvenir"}); return; } catch (e) { if (e.name === "AbortError") return; }
+  }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); a.remove();
+}
+async function buildSouvenir() {
+  try { await Promise.all([document.fonts.load("italic 400 76px Fraunces"), document.fonts.load("500 80px Caveat")]); } catch (e) {}
+  const photos = await Promise.all(CONFIG.souvenirPhotos.slice(0, 6).map(loadAny));
+  const make = async p => {
+    const mk = layer => { const c = document.createElement("canvas"); c.width = 1080; c.height = 1350; drawSouvenir(c.getContext("2d"), 1080, 1350, p, layer); return c; };
+    svLayers = {bg: mk("bg"), bouquet: mk("bouquet")};
+    const c = document.createElement("canvas"); c.width = 1080; c.height = 1350; composeFrame(c.getContext("2d"), 1080, 1350, 0, false);
+    return new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error("no blob")), "image/png"));
+  };
+  try { svBlob = await make(photos); } catch (e) { svBlob = await make([]); }   // without the photos if the browser blocks them (e.g. opened as a local file)
+}
+const makeSouvenir = () => svP || (svP = buildSouvenir());
+async function openSouvenir() {
+  $("#souvenir").hidden = false; burst(); hearts(18);
+  try {
+    await makeSouvenir();
+    $("#svCanvas").hidden = false; $("#svSave").disabled = false; $("#svGif").disabled = false;
+    $("#svHint").textContent = "Save it as a picture, or as a moving GIF.";
+    startSvAnim();
+  } catch (e) { $("#svHint").textContent = "Sorry, the picture couldn't be made on this device."; }
+}
+// gentle 3D tilt while she moves a finger or the mouse over the picture
+(() => {
+  const im = $("#svCanvas"), reset = () => { im.style.transform = ""; };
+  im.addEventListener("pointermove", e => {
+    const r = im.getBoundingClientRect(), px = (e.clientX - r.left) / r.width - .5, py = (e.clientY - r.top) / r.height - .5;
+    im.style.transform = `rotateY(${px * 22}deg) rotateX(${-py * 22}deg) scale(1.02)`;
+  });
+  ["pointerleave", "pointerup", "pointercancel"].forEach(t => im.addEventListener(t, reset));
+})();
+$("#souvenirBtn").onclick = openSouvenir;
+$("#svClose").onclick = () => { $("#souvenir").hidden = true; };
+$("#souvenir").onclick = e => { if (e.target.id === "souvenir") $("#souvenir").hidden = true; };
+$("#svGif").onclick = async () => {
+  const btn = $("#svGif"), label = btn.textContent; btn.disabled = true;
+  try {
+    const W = 540, H = 675, N = 36, c = document.createElement("canvas"); c.width = W; c.height = H;
+    const g = c.getContext("2d", {willReadFrequently: true}), frames = [];
+    for (let i = 0; i < N; i++) {
+      composeFrame(g, W, H, i / N); frames.push(g.getImageData(0, 0, W, H).data);
+      if (i % 3 === 0) { btn.textContent = `Making GIF… ${Math.round(i / N * 40)}%`; await new Promise(r => setTimeout(r)); }
+    }
+    const blob = await encodeGif(frames, W, H, 7, p => { btn.textContent = `Making GIF… ${40 + Math.round(p * 60)}%`; });
+    await shareOrDownload(blob, "birthday-souvenir.gif", "image/gif");
+  } catch (e) { $("#svHint").textContent = "Sorry, the GIF couldn't be made on this device."; }
+  btn.textContent = label; btn.disabled = false;
+};
+$("#svSave").onclick = async () => {
+  if (!svBlob) return;
+  const file = new File([svBlob], "birthday-souvenir.png", {type: "image/png"});
+  if (navigator.canShare && navigator.canShare({files: [file]})) {
+    try { await navigator.share({files: [file], title: "Birthday souvenir"}); return; } catch (e) { if (e.name === "AbortError") return; }
+  }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(svBlob); a.download = "birthday-souvenir.png";
+  document.body.append(a); a.click(); a.remove();
+};
+
 // date lock + countdown on the first page
 const UNLOCK = new Date(CONFIG.unlockAt).getTime();
 const preview = !!CONFIG.previewKey && new URLSearchParams(location.search).get("preview") === CONFIG.previewKey;
