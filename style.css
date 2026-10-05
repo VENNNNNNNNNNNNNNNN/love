@@ -204,3 +204,20 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
   #envelope{height:210px}
   #svCanvas{width:min(90vw,560px,56vh)}
 }
+
+/* countdown celebration */
+#cdTimer[hidden]{display:none}
+.cd:last-child b{animation:cdTick .45s ease-out}
+@keyframes cdTick{from{transform:scale(1.3);color:var(--gold)}}
+#countdown.final .cd{animation:cdThrob 1s ease-in-out infinite;box-shadow:0 0 0 2px var(--rose)}
+@keyframes cdThrob{50%{transform:scale(1.06)}}
+#cdOverlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;pointer-events:none;z-index:150;padding:20px;
+  font:600 clamp(7rem,32vw,17rem)/1 Fraunces,Georgia,serif;color:var(--gold);text-shadow:0 8px 40px rgba(0,0,0,.45)}
+#cdOverlay[hidden]{display:none}
+#cdOverlay.msg{font-size:clamp(2.2rem,9vw,5.5rem);line-height:1.15;color:#fff}
+#cdOverlay.pop{animation:cdPop .9s ease-out}
+@keyframes cdPop{from{opacity:0;transform:scale(2.2)}30%{opacity:1}to{opacity:1;transform:scale(1)}}
+.btn.unlocked{animation:unlockShake 1s ease,btnPulse 1.8s ease-out 1s infinite}
+@keyframes unlockShake{0%{transform:scale(.8) rotate(-6deg)}40%{transform:scale(1.15) rotate(4deg)}70%{transform:scale(.96) rotate(-2deg)}100%{transform:none}}
+@keyframes btnPulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.55)}100%{box-shadow:0 0 0 22px rgba(255,255,255,0)}}
+#cdOverlay{background:radial-gradient(circle at 50% 50%,rgba(20,6,14,.82),rgba(20,6,14,.6))}
