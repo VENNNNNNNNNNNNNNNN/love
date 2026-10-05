@@ -150,3 +150,57 @@ main {
 .sv-card{perspective:900px}
 #svCanvas{transition:transform .18s ease-out;will-change:transform;touch-action:pan-y}
 #svCanvas{width:min(90vw,440px,50vh);height:auto;max-width:none;max-height:none}
+
+/* ===== desktop & laptop ===== */
+.screen{overflow-y:auto;justify-content:safe center;scrollbar-width:thin;scrollbar-color:var(--rose) transparent}
+.screen.scroll{justify-content:flex-start}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+@media (hover:hover){
+  .btn:hover{filter:brightness(1.1);transform:translateY(-2px)}
+  .btn{transition:transform .2s,filter .2s}
+  .reason:not(.open):hover{background:#ffffff1f;transform:translateY(-2px)}
+  .reason{transition:transform .2s,background .2s}
+  .sw:hover{transform:scale(1.12)}.sw{transition:transform .2s}
+  .lw:hover{text-decoration:underline wavy var(--rose)}
+  #bar button:hover{background:#ffffff30}
+}
+@media (min-width:900px){
+  html{font-size:18px}
+  body{font-size:1.125rem}
+  .screen{max-width:46rem;padding:96px 40px 48px;gap:18px}
+  h1{font-size:clamp(2.8rem,4.2vw,4.2rem)}
+  h2{font-size:2.3rem}
+  .small{font-size:1.05rem}
+  #bar{padding:16px 28px}
+  #bar button{width:48px;height:48px}
+  #progress{font-size:1rem}
+  .btn{padding:17px 38px;font-size:1.15rem}
+  .sw{width:52px;height:52px}
+  .cd{min-width:92px;padding:12px 8px}.cd b{font-size:2.4rem}.cd span{font-size:.8rem}
+  #cake{font-size:5.5rem}
+  #timeline{max-width:680px}
+  #reasons{grid-template-columns:repeat(2,1fr);gap:16px}
+  .reason{min-height:96px;font-size:1.1rem}
+  .reason:last-child:nth-child(odd){grid-column:1/-1}
+  #envelope{width:380px;height:250px}
+  #envelope span{font-size:4rem}#envelope b{font-size:2rem}
+  #letter{padding:36px 44px}
+  #letterText{font-size:1.65rem}
+  #loveCount{font-size:1.05rem;padding:12px 24px}
+  .rv b{font-size:3.6rem}.rv small{font-size:1.5rem}.rv span{font-size:1.2rem}
+  .count{font-size:6.5rem}
+  .moment.end p,.note p{font-size:2.3rem}
+  #svCanvas{width:min(90vw,620px,58vh)}
+  .sv-actions{gap:14px}
+}
+@media (min-width:1400px){
+  html{font-size:20px}
+  .screen{max-width:48rem}
+  #timeline{max-width:760px}
+}
+@media (min-width:900px) and (max-height:760px){
+  .screen{padding-top:80px;gap:12px}
+  #cake{font-size:4rem}
+  #envelope{height:210px}
+  #svCanvas{width:min(90vw,560px,56vh)}
+}
