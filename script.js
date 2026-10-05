@@ -535,6 +535,7 @@ async function openSouvenir() {
   ["pointerleave", "pointerup", "pointercancel"].forEach(t => im.addEventListener(t, reset));
 })();
 $("#souvenirBtn").onclick = openSouvenir;
+document.addEventListener("keydown", e => { if (e.key === "Escape") $("#souvenir").hidden = true; });
 $("#svClose").onclick = () => { $("#souvenir").hidden = true; };
 $("#souvenir").onclick = e => { if (e.target.id === "souvenir") $("#souvenir").hidden = true; };
 $("#svGif").onclick = async () => {
