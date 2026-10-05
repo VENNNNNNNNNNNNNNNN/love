@@ -8,6 +8,8 @@ birthdayFrom: "From: Raiven ❤️",
   voice: "assets/voice/voice.mp3", // short voice note on the last screen; leave "" to hide it
   unlockAt: "2026-10-07T00:00:00+08:00", // when the Open button unlocks (+08:00 = Philippines time)
   lockText: "Opens on October 7 🎂",
+  unlockText: "It's October 7! 🎂",        // big message when the countdown reaches zero
+  readyText: "Your surprise is ready 💌",
   previewKey: "raiven-test",          // for testing: add ?preview=raiven-test to the link to skip the lock
   souvenirPhotos: [   // the bouquet: up to 6 pictures, one per flower. The first one goes in the biggest, middle flower.
     "assets/images/photo1.jpg", "assets/images/photo5.jpg", "assets/images/photo9.jpg",
@@ -562,20 +564,45 @@ $("#svSave").onclick = async () => {
   document.body.append(a); a.click(); a.remove();
 };
 
-// date lock + countdown on the first page
-const UNLOCK = new Date(CONFIG.unlockAt).getTime();
-const preview = !!CONFIG.previewKey && new URLSearchParams(location.search).get("preview") === CONFIG.previewKey;
-function isLocked() { return !preview && UNLOCK > Date.now(); }
+// date lock + countdown on the first page, with a celebration when the date arrives
+const params = new URLSearchParams(location.search);
+const preview = !!CONFIG.previewKey && params.get("preview") === CONFIG.previewKey;
+const demo = preview ? +params.get("demo") || 0 : 0;     // ?preview=KEY&demo=12 pretends it unlocks in 12 seconds (to test the animation)
+const UNLOCK = demo ? Date.now() + demo * 1000 : new Date(CONFIG.unlockAt).getTime();
+function isLocked() { return (demo || !preview) && UNLOCK > Date.now(); }
+const startedLocked = isLocked();
+let lastSec = -1;
+function overlay(text, isMsg) {
+  const o = $("#cdOverlay"); o.hidden = false; o.className = isMsg ? "msg" : ""; o.textContent = text;
+  void o.offsetWidth; o.classList.add("pop");
+}
+function celebrate() {
+  const btn = $("#openBtn");
+  $("#countdown").classList.remove("final"); $("#cdTimer").hidden = true; $("#cdLabel").textContent = CONFIG.readyText;
+  btn.disabled = false; btn.textContent = "🔓 Unlocked!"; btn.classList.add("unlocked");
+  setTimeout(() => { btn.textContent = "Open 💌"; }, 1400);
+  overlay(CONFIG.unlockText, true); burst(); hearts(30);
+  setTimeout(burst, 700); setTimeout(() => { burst(); hearts(20); }, 1500);
+  setTimeout(() => { $("#cdOverlay").hidden = true; }, 4500);
+}
 function tickCountdown() {
-  const box = $("#countdown"), btn = $("#openBtn"), ms = UNLOCK - Date.now();
-  if (!isLocked()) { box.hidden = true; btn.disabled = false; btn.textContent = "Open 💌"; clearInterval(cdT); return; }
-  const s = Math.floor(ms / 1000);
-  $("#cdLabel").textContent = CONFIG.lockText;
+  const box = $("#countdown"), btn = $("#openBtn"), s = Math.ceil((UNLOCK - Date.now()) / 1000);
+  if (!isLocked()) {
+    clearInterval(cdT);
+    if (startedLocked) celebrate();                                   // the date arrived while she was on the page
+    else if (!preview) { box.hidden = false; $("#cdTimer").hidden = true; $("#cdLabel").textContent = CONFIG.readyText; btn.disabled = false; btn.classList.add("unlocked"); setTimeout(burst, 600); }
+    else { box.hidden = true; btn.disabled = false; }
+    return;
+  }
+  if (s === lastSec) return; lastSec = s;
+  $("#cdLabel").textContent = CONFIG.lockText; $("#cdTimer").hidden = false;
   $("#cdTimer").innerHTML = [[Math.floor(s / 86400), "days"], [Math.floor(s % 86400 / 3600), "hours"], [Math.floor(s % 3600 / 60), "min"], [s % 60, "sec"]]
     .map(([v, l]) => `<div class="cd"><b>${String(v).padStart(2, "0")}</b><span>${l}</span></div>`).join("");
-  box.hidden = false; btn.disabled = true; btn.textContent = "🔒 Not yet…";
+  box.hidden = false; box.classList.toggle("final", s <= 10);
+  btn.disabled = true; btn.textContent = "🔒 Not yet…";
+  if (s <= 10) overlay(String(s), false);                              // big 10... 9... 8... in the last seconds
 }
-const cdT = setInterval(tickCountdown, 1000); tickCountdown();
+const cdT = setInterval(tickCountdown, 250); tickCountdown();
 
 // fullscreen (starts from the first tap; iPhone Safari does not allow it)
 function goFullscreen() {
