@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>For you 💌</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
+<style>
+:root{--bg:#2a1424;--bg2:#431f38;--rose:#e8607a;--gold:#f2c46d;--text:#fbeee8}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:radial-gradient(circle at 50% 30%,var(--bg2),var(--bg) 70%);color:var(--text);font:400 18px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;transition:opacity .8s ease;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+body.out{opacity:0}
+.stage{position:relative;z-index:2;padding:24px;display:flex;flex-direction:column;align-items:center;gap:20px}
+.env{font-size:5.5rem;line-height:1;animation:beat 1.3s ease-in-out infinite;filter:drop-shadow(0 8px 24px rgba(232,96,122,.5))}
+@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.18)}30%{transform:scale(1)}45%{transform:scale(1.12)}}
+.line{font:italic 400 1.7rem/1.3 Georgia,"Times New Roman",serif;min-height:2.7em;opacity:0;transform:translateY(8px);transition:opacity .9s ease,transform .9s ease}
+.line.show{opacity:1;transform:none}
+.bar{width:min(70vw,260px);height:8px;border-radius:99px;background:#ffffff22;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--rose),var(--gold));border-radius:99px;transition:width 4.4s linear}
+.bar.go i{width:100%}
+a{color:var(--gold);font-size:.9rem;opacity:0;transition:opacity 1s ease;text-decoration:underline}
+a.show{opacity:.85}
+.h{position:fixed;bottom:-40px;z-index:1;pointer-events:none;animation:up linear forwards}
+@keyframes up{to{transform:translateY(-115vh) rotate(25deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.line{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="env">💌</div>
+  <p class="line" id="line"></p>
+  <div class="bar" id="bar"><i></i></div>
+  <a id="skip" href="./">Tap here if it doesn't open</a>
+</div>
+<script>
+// sweet little hello, then straight to the surprise
+var lines = ["Hi, love 💗", "I made something for you…", "Opening your surprise ✨"];
+var line = document.getElementById("line"), reduce = matchMedia("(prefers-reduced-motion:reduce)").matches;
+function showLine(i) {
+  line.classList.remove("show");
+  setTimeout(function () { line.textContent = lines[i]; line.classList.add("show"); }, 350);
+}
+function heart() {
+  var h = document.createElement("span"); h.className = "h";
+  h.textContent = ["💗", "💖", "💕", "✨"][Math.floor(Math.random() * 4)];
+  h.style.left = Math.random() * 100 + "%"; h.style.fontSize = 16 + Math.random() * 24 + "px";
+  h.style.animationDuration = 3.5 + Math.random() * 3 + "s";
+  document.body.appendChild(h); setTimeout(function () { h.remove(); }, 7000);
+}
+function go() { document.body.classList.add("out"); setTimeout(function () { location.replace("./"); }, 800); }
+if (reduce) { line.textContent = lines[2]; setTimeout(go, 1500); }
+else {
+  var bar = document.getElementById("bar"); void bar.offsetWidth; bar.classList.add("go");
+  showLine(0); setTimeout(function () { showLine(1); }, 1500); setTimeout(function () { showLine(2); }, 3000);
+  var t = setInterval(heart, 260); setTimeout(function () { clearInterval(t); }, 4800);
+  setTimeout(function () { document.getElementById("skip").classList.add("show"); }, 3000);
+  setTimeout(go, 4700);
+}
+</script>
+</body>
+</html>
