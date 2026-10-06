@@ -16,6 +16,16 @@
 <body>
 <canvas id="confetti"></canvas>
 <div id="cdOverlay" hidden></div>
+<div id="gift" hidden>
+  <div class="rays"></div>
+  <div class="gbox">
+    <div class="gglow"></div>
+    <div class="gbody"><b class="gribV"></b></div>
+    <div class="glid"><b class="gribV"></b><i class="bow bl"></i><i class="bow br"></i><i class="gknot"></i></div>
+  </div>
+  <p class="gtext">Opening your gift…</p>
+  <div class="gflash"></div>
+</div>
 <div id="hearts"></div>
 
 <header id="bar" hidden>
@@ -98,12 +108,19 @@
     <p class="small">Your little souvenir</p>
     <canvas id="svCanvas" width="540" height="675" hidden></canvas>
     <small id="svHint">Making your souvenir…</small>
+    <button class="linkbtn" id="svTrouble">Can't save? Tap here</button>
     <div class="sv-actions">
+      <button class="btn ghost" id="svFlip" disabled>💌 Read the letter</button>
       <button class="btn" id="svSave" disabled>Save as picture</button>
-      <button class="btn" id="svGif" disabled>Save as GIF</button>
+      <button class="btn" id="svGif" disabled>Save as GIF (2)</button>
       <button class="btn ghost" id="svClose">Close</button>
     </div>
   </div>
+</div>
+<div id="svPics" hidden>
+  <p class="small">Press and hold a picture, then choose “Save image”</p>
+  <div id="svPicList"></div>
+  <button class="btn ghost" id="svPicsClose">Close</button>
 </div>
 <audio id="audio" loop preload="none"></audio>
 <script src="script.js"></script>
