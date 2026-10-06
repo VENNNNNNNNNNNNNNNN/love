@@ -53,7 +53,7 @@ birthdayFrom: "From: Raiven ❤️",
     // {title: "Us", video: "assets/videos/clip1.mp4", caption: "Press the speaker to hear it."}
   ],
   storyEnd: {title: "Why 22?", count: 22, text: "22 moments, because you're turning 22."},
-  reasonsEnd: {title: "Why 7?", count: 7, text: "7 reasons, because your birthday is on the 7th."},
+  reasonsEnd: {title: "Why?", count: 7, text: "7 reasons, because your birthday is on the 7th."},
   reasons: [
     "You make ordinary days feel special.",
     "The way you get excited about food.",
