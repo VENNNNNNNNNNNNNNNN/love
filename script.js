@@ -16,8 +16,10 @@ birthdayFrom: "From: Raiven ❤️",
     "assets/images/photo14.jpg", "assets/images/photo19.jpg", "assets/images/photo22.jpg"
   ],
   souvenirTitle: "Happy 22nd Birthday",
+  backTitle: "A letter for you",         // title on the back of the souvenir (the letter side)
   souvenirDate: "October 7, 2026",
   souvenirFrom: "From Raiven",
+  storyHold: 1300,   // how long the auto-scroll rests on each moment (ms)
   typeSpeed: 40,     // letter typing: milliseconds per character (higher = slower)
   musicVolume: 0.6,  // normal song volume (0 to 1)
   duckVolume: 0.12,  // song volume while the voice note plays
@@ -60,7 +62,7 @@ birthdayFrom: "From: Raiven ❤️",
     "Your kindness and how gently you treat the world around you.",
     "Most importantly the way you are."
   ],
-  letter: "Happy birthday sa pinakamagandang regalong dumating sa buhay ko ayieee hahaha, love. Hindi ko explain kung gaano ako kaswerte na ikaw ang kasama ko ngayon. Ikaw ang nagpapasaya sa bawat araw ko sa simpleng mga paraan lang tulad ng lagging pagiintindi ng sitwasyon ko. Sobrang natutuwa ako kapag nakikita ko kung paano ka ma excite tungkol sa pagkain wag lang lagi sa matamis. Ang sarap sa pakiramdam na nandayn ka parati sa tabi ko Kahit ano mang mangyari. At syempre, hinding-hindi ko pagsasawaan ang tawa mo na walang katulad na may backfire AHAHA. Punong-puno ka talaga ng mga surprise na laging nagpapasaya hindi lang sakin pati mga nakapaligid sayo. Sana ngayong special na araw mo, maramdaman mo kung gaano ka kahalaga sa akin, love.\n\nMaraming salamat sa lahat ng pag-aalala at pagmamahal na binibigay mo sa araw araw. Pinapangako ko na nandito lang ako para sumuporta sa lahat ng pangarap mo sa buhay. Susuportahan kita sa bawat hakbang, tulad ng pagsuporta mo sa akin noon pa, love. Kahit anong pagsubok ang dumating, alam kong kakayanin natin basta magkasama tayo. Pinapahalagahan ko ang bawat segundo, oras, at araw na magkasama tayong dalawa. Ikaw ang paborito kong tao sa mundong ito na punong-puno ng ibat ibang ugali. Sana ay matupad ang lahat ng mga wish mo ngayong araw, love.\n\nDeserve mo lahat ng magagandang bagay na nangyayari at darating sa buhay mo. Hinding-hindi ako magsasawang kainin ang masasarap mo na luto pati ikaw jk AHAHA. Salamat dahil ikaw ang naging tahanan ko at sandigan sa panahong kailangan ko ng karamay. Sana ay masaya ka ngayong araw dahil ginawa ko ang lahat para mapangiti ka, love. Sana ma appreciate ang munti kong regalo pasensya na talaga babawi ako sa susunod. Again, Salamat love sa lahat ng pagmamahal, pagiintindi, pag-aalala at pagsama Kahit may mabigat na pagsubok na dumaan. Happy, happy birthday ulit sa iyo, loveee, mahal na mahal kita nang buong-buo.",
+  letter: "Happy birthday sa pinakamagandang regalong dumating sa buhay ko ayieee AHAHAH, love. Hindi ko explain kung gaano ako kaswerte na ikaw ang kasama ko ngayon. Ikaw ang nagpapasaya sa bawat araw ko sa simpleng mga paraan lang tulad ng laging pagiintindi ng sitwasyon ko. Sobrang natutuwa ako kapag nakikita ko kung paano ka ma excite tungkol sa pagkain wag lang lagi sa matamis. Ang sarap sa pakiramdam na nandayn ka parati sa tabi ko Kahit ano mang mangyari. At syempre, hinding-hindi ko pagsasawaan ang tawa mo na walang katulad na may backfire AHAHA. Punong-puno ka talaga ng mga surprise na laging nagpapasaya hindi lang sakin pati mga nakapaligid sayo. Sana ngayong special na araw mo, maramdaman mo kung gaano ka kahalaga sa akin, love.\n\nMaraming salamat sa lahat ng pag-aalala at pagmamahal na binibigay mo sa araw araw. Pinapangako ko na nandito lang ako para sumuporta sa lahat ng pangarap mo sa buhay. Susuportahan kita sa bawat hakbang, tulad ng pagsuporta mo sa akin noon pa, love. Kahit anong pagsubok ang dumating, alam kong kakayanin natin basta magkasama tayo. Pinapahalagahan ko ang bawat segundo, oras, at araw na magkasama tayong dalawa. Ikaw ang paborito kong tao sa mundong ito na punong-puno ng ibat ibang ugali. Sana ay matupad ang lahat ng mga wish mo ngayong araw, love.\n\nDeserve mo lahat ng magagandang bagay na nangyayari at darating sa buhay mo. Hinding-hindi ako magsasawang kainin ang masasarap mo na luto pati ikaw jk AHAHA. Salamat dahil ikaw ang naging tahanan ko at sandigan sa panahong kailangan ko ng karamay. Sana ay masaya ka ngayong araw dahil ginawa ko ang lahat para mapangiti ka, love. Sana ma appreciate ang munti kong regalo pasensya na talaga babawi ako sa susunod. Again, Salamat love sa lahat ng pagmamahal, pagiintindi, pag-aalala at pagsama Kahit may mabigat na pagsubok na dumaan. Happy, happy birthday ulit sa iyo, loveee, mahal na mahal kita nang buong-buo.",
   letterReveal: [
     {n: 22, label: "sentences", why: "because you're turning 22"},
     {n: 7, label: "love words", why: "because your birthday is on October 7"},
@@ -168,6 +170,7 @@ function show(n, push = true) {
   $("#progress").textContent = `Part ${n + 1} of ${screens.length} — ${titles[n]}`;
   screens[n].scrollTop = 0;
   if (n === 1) { burst(); hearts(24); }
+  if (n === 3 && round === 2 && !reasonsGuided) { reasonsGuided = true; guidedReasons(); }
   if (n === 4 && round === 2) startLoveGame();
   if (n === 5) {
     burst(); $("#afterLine").hidden = round === 2; $("#voiceBtn").hidden = !(voiceOK && gameWon);
@@ -178,7 +181,7 @@ function show(n, push = true) {
 document.querySelectorAll("[data-go]").forEach(b => b.onclick = () => {
   const n = +b.dataset.go;
   if (n === 1 && isLocked()) return;
-  if (n === 1) { startMusic(); goFullscreen(); }
+  if (n === 1) { startMusic(); goFullscreen(); playGift(() => show(1)); return; }   // the gift opens first, then the birthday page
   show(n);
 });
 $("#back").onclick = () => { if (history.length) show(history.pop(), false); };
@@ -196,18 +199,60 @@ $("#music").onclick = () => {
   else { audio.pause(); $("#music").textContent = "🔇"; }
 };
 
+// ---- animations that cannot be skipped: navigation and scrolling are locked while they play
+const wait = ms => new Promise(r => setTimeout(r, ms));
+let navLocks = 0;
+function lockNav(on) { navLocks += on ? 1 : -1; $("#back").disabled = navLocks > 0; }
+function tweenScroll(el, to, ms) {
+  return new Promise(res => {
+    const from = el.scrollTop, d = to - from, t0 = performance.now();
+    const step = now => { const k = Math.min(1, (now - t0) / ms), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; el.scrollTop = from + d * e; k < 1 ? requestAnimationFrame(step) : res(); };
+    requestAnimationFrame(step);
+  });
+}
+async function waitFor(fn, max = 20000) { const t0 = Date.now(); while (!fn() && Date.now() - t0 < max) await wait(200); }
+async function guidedStory() {            // round 2: the page scrolls by itself, moment by moment, down to "Why 22?"
+  const sc = $("#s2"), btn = sc.querySelector(".btn"); lockNav(true); btn.disabled = true; sc.classList.add("auto");
+  await wait(900);
+  for (const m of sc.querySelectorAll("#timeline .moment")) {
+    const r = m.getBoundingClientRect(), s = sc.getBoundingClientRect();
+    await tweenScroll(sc, Math.max(0, sc.scrollTop + (r.top - s.top) - (sc.clientHeight - m.offsetHeight) / 2), 1000);
+    await wait(CONFIG.storyHold);
+  }
+  await waitFor(() => $("#storyNote").classList.contains("done")); await wait(1200);
+  await tweenScroll(sc, sc.scrollHeight, 700);
+  sc.classList.remove("auto"); btn.disabled = false; lockNav(false);
+}
+async function guidedReasons() {          // round 2: scrolls down by itself to "Why 7?" and waits for the count
+  const sc = $("#s3"), btn = sc.querySelector(".btn"); lockNav(true); btn.disabled = true; sc.classList.add("auto");
+  await wait(900); await tweenScroll(sc, sc.scrollHeight, 1500);
+  await waitFor(() => $("#reasonsNote").classList.contains("done")); await wait(1200);
+  sc.classList.remove("auto"); btn.disabled = false; lockNav(false);
+}
+async function countTo(el, to, ms) { for (let i = 1; i <= to; i++) { el.textContent = i; el.classList.remove("tick"); void el.offsetWidth; el.classList.add("tick"); await wait(ms); } }
+async function revealRows() {             // 22 sentences, 7 love words, 3 paragraphs: each number counts up, one after the other
+  lockNav(true);
+  const rows = [...$("#letterReveal").querySelectorAll(".rv")], speeds = [110, 300, 500], reduce = matchMedia("(prefers-reduced-motion:reduce)").matches;
+  for (let i = 0; i < rows.length; i++) {
+    rows[i].classList.add("show"); const b = rows[i].querySelector("b"), n = +rows[i].dataset.n;
+    if (reduce) b.textContent = n; else { await wait(500); await countTo(b, n, speeds[i] || 300); await wait(700); }
+  }
+  $("#toEnd").hidden = false; lockNav(false);
+}
+let reasonsGuided = false;
+
 // letter + love-word minigame: find every "love" in the letter to unlock the reveal
-let loveTotal = 0, loveFound = 0, hintT = null, typingOn = false, skipTyping = null;
+let loveTotal = 0, loveFound = 0, hintT = null, typingOn = false;
 let round = 1, loveStarted = false, gameWon = false;   // round 1: normal pages. round 2 (after "go back"): twists + minigame
 const esc = t => t.replace(/&/g, "&amp;").replace(/</g, "&lt;");
-$("#letterReveal").innerHTML = CONFIG.letterReveal.map(r => `<div class="rv"><b>${r.n}</b><span>${r.label}</span><small>${r.why}</small></div>`).join("");
+$("#letterReveal").innerHTML = CONFIG.letterReveal.map(r => `<div class="rv" data-n="${r.n}"><b>0</b><span>${r.label}</span><small>${r.why}</small></div>`).join("");
 function loveHint() {
   clearTimeout(hintT);
   document.querySelectorAll(".lw.hint").forEach(w => w.classList.remove("hint"));
   hintT = setTimeout(() => document.querySelectorAll(".lw:not(.found)").forEach(w => w.classList.add("hint")), 20000);
 }
 function finishTyping() {            // round 1: plain letter, no minigame
-  clearTimeout(typing); typingOn = false;
+  clearTimeout(typing); typingOn = false; lockNav(false);
   $("#letterText").textContent = CONFIG.letter;
   $("#toEnd").hidden = false;
 }
@@ -227,10 +272,10 @@ function loveWin() {
   clearTimeout(hintT); $("#loveCount").hidden = true; burst(); hearts(24);
   const r = $("#letterReveal"); r.hidden = false;
   setTimeout(() => r.scrollIntoView({behavior: "smooth", block: "center"}), 300);
-  setTimeout(() => $("#toEnd").hidden = false, 3200);
+  revealRows();
 }
 $("#letterText").onclick = e => {
-  if (typingOn) { skipTyping && skipTyping(); return; }
+  if (typingOn) return;                                // typing cannot be skipped
   const w = e.target.closest(".lw");
   if (!w || w.classList.contains("found")) return;
   w.classList.add("found"); loveFound++; hearts(2);
@@ -239,8 +284,7 @@ $("#letterText").onclick = e => {
 };
 $("#envelope").onclick = () => {
   $("#envWrap").hidden = true; $("#letter").hidden = false;
-  const el = $("#letterText"); let i = 0; typingOn = true; clearTimeout(typing);
-  skipTyping = () => { el.textContent = CONFIG.letter; finishTyping(); };
+  const el = $("#letterText"); let i = 0; typingOn = true; clearTimeout(typing); lockNav(true);
   const step = () => {                       // types one character at a time, pausing at commas, sentences and paragraphs
     i++; el.textContent = CONFIG.letter.slice(0, i);
     if (i % 6 === 0) el.scrollIntoView({block: "end"});
@@ -443,11 +487,72 @@ function composeFrame(g, W, H, t, fx = true) {
   g.drawImage(svLayers.bouquet, 0, 0, W, H); g.restore();
   if (fx) [[250, 330], [830, 300], [180, 560], [900, 590], [300, 880], [790, 900], [540, 255], [640, 330]].forEach(([x, y], i) => sparkle(g, x * s, y * s, (10 + 14 * Math.max(0, Math.sin(ph * 2 + i * 1.3))) * s, Math.max(0, Math.sin(ph * 2 + i * 1.3))));
 }
+let svSide = 0, svFlipP = 0, svBack = null, svBackBlob = null, svTmpC = null, svGifs = null;
+// the back of the souvenir: the letter, fitted to the card
+function layoutLetter(g, text, maxW, maxH, fMax, fMin) {
+  let out;
+  for (let fs = fMax; fs >= fMin; fs--) {
+    g.font = `500 ${fs}px Caveat, cursive`; const lh = fs * 1.22, sp = g.measureText(" ").width, lines = [];
+    text.split("\n").forEach(par => {
+      if (!par.trim()) { lines.push(null); return; }
+      let cur = [], w = 0;
+      par.split(/\s+/).forEach(word => { const ww = g.measureText(word).width; if (cur.length && w + sp + ww > maxW) { lines.push(cur); cur = []; w = 0; } w += (cur.length ? sp : 0) + ww; cur.push(word); });
+      lines.push(cur);
+    });
+    out = {fs, lh, sp, lines};
+    if (lines.reduce((a, l) => a + (l ? lh : lh * .55), 0) <= maxH) break;
+  }
+  return out;
+}
+function drawBack(g, W, H) {
+  const ROSE = "#a31d43", ROSE2 = "#e8607a";
+  const rr = (x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
+  const bg = g.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, "#ffe2e8"); bg.addColorStop(1, "#fff6f0"); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+  g.lineWidth = 6; g.strokeStyle = ROSE2; rr(40, 40, W - 80, H - 80, 56); g.stroke();
+  g.lineWidth = 2; g.strokeStyle = "#f4aab9"; rr(58, 58, W - 116, H - 116, 44); g.stroke();
+  [[130, 130, 34], [950, 140, 26], [110, H - 330, 26], [965, H - 320, 30]].forEach(([x, y, w]) => miniHeart(g, x, y, w, .6));
+  g.textAlign = "center"; g.textBaseline = "middle";
+  g.fillStyle = ROSE; g.font = "italic 400 60px Fraunces, Georgia, serif"; g.fillText(CONFIG.backTitle, W / 2, 125);
+  const px = 85, py = 190, pw = W - 170, ph = H - py - 180, padX = 54, padY = 46;
+  g.save(); g.shadowColor = "rgba(120,30,60,.3)"; g.shadowBlur = 26; g.shadowOffsetY = 10; g.fillStyle = "#fffdf9"; rr(px, py, pw, ph, 28); g.fill(); g.restore();
+  g.lineWidth = 3; g.strokeStyle = "#f4aab9"; rr(px, py, pw, ph, 28); g.stroke();
+  const L = layoutLetter(g, CONFIG.letter, pw - 2 * padX, ph - 2 * padY, 40, 16);
+  g.textAlign = "left"; g.textBaseline = "top"; g.font = `500 ${L.fs}px Caveat, cursive`;
+  let y = py + padY;
+  L.lines.forEach(l => {
+    if (!l) { y += L.lh * .55; return; }
+    let x = px + padX;
+    l.forEach(w => { g.fillStyle = /^love+[.,!?]*$/i.test(w) ? ROSE2 : "#4a2236"; g.fillText(w, x, y); x += g.measureText(w).width + L.sp; });
+    y += L.lh;
+  });
+  g.textAlign = "center"; g.textBaseline = "middle";
+  g.fillStyle = "#783c52"; g.font = "italic 400 38px Fraunces, Georgia, serif"; g.fillText(CONFIG.souvenirDate, W / 2, H - 140);
+  g.fillStyle = ROSE; g.font = "500 50px Caveat, cursive"; g.fillText(CONFIG.souvenirFrom, W / 2, H - 92);
+}
+// p: 0 = front (swaying bouquet), 1 = back (the letter); in between the card turns around
+function flipFrame(g, W, H, t, p, bg) {
+  if (p >= 1) { g.clearRect(0, 0, W, H); if (bg) { g.fillStyle = bg; g.fillRect(0, 0, W, H); } g.drawImage(svBack, 0, 0, W, H); return; }
+  if (p <= 0) { composeFrame(g, W, H, t); return; }
+  if (!svTmpC) svTmpC = document.createElement("canvas");
+  svTmpC.width = W; svTmpC.height = H;
+  if (p < .5) composeFrame(svTmpC.getContext("2d"), W, H, t);
+  const sx = Math.abs(Math.cos(p * Math.PI)), sy = 1 - .05 * Math.sin(p * Math.PI);
+  g.clearRect(0, 0, W, H); if (bg) { g.fillStyle = bg; g.fillRect(0, 0, W, H); }
+  g.save(); g.translate(W / 2, H / 2); g.scale(Math.max(sx, .01), sy); g.translate(-W / 2, -H / 2);
+  g.drawImage(p < .5 ? svTmpC : svBack, 0, 0, W, H);
+  g.fillStyle = `rgba(0,0,0,${(1 - sx) * .28})`; g.fillRect(0, 0, W, H); g.restore();
+}
 function startSvAnim() {
   cancelAnimationFrame(svRAF);
-  const cv = $("#svCanvas"), g = cv.getContext("2d"), t0 = performance.now();
-  if (matchMedia("(prefers-reduced-motion:reduce)").matches) { composeFrame(g, cv.width, cv.height, 0, false); return; }
-  const loop = now => { if ($("#souvenir").hidden) return; composeFrame(g, cv.width, cv.height, ((now - t0) / 3000) % 1); svRAF = requestAnimationFrame(loop); };
+  const cv = $("#svCanvas"), g = cv.getContext("2d"), t0 = performance.now(); let last = t0;
+  const still = matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const loop = now => {
+    if ($("#souvenir").hidden) return;
+    const dt = now - last; last = now;
+    svFlipP += Math.sign(svSide - svFlipP) * Math.min(Math.abs(svSide - svFlipP), dt / (still ? 1 : 650));
+    flipFrame(g, cv.width, cv.height, still ? 0 : ((now - t0) / 3000) % 1, svFlipP);
+    svRAF = requestAnimationFrame(loop);
+  };
   svRAF = requestAnimationFrame(loop);
 }
 // ---- tiny GIF encoder (no libraries)
@@ -468,9 +573,9 @@ function gifLZW(idx) {
   for (let i = 0; i < out.length; i += 255) { const n = Math.min(255, out.length - i); res.push(n); for (let j = 0; j < n; j++) res.push(out[i + j]); }
   res.push(0); return Uint8Array.from(res);
 }
-async function encodeGif(frames, W, H, delay, onProgress) {
+async function encodeGif(frames, W, H, delay, onProgress, samples) {
   const cnt = new Uint32Array(4096), sr = new Uint32Array(4096), sg = new Uint32Array(4096), sb = new Uint32Array(4096);
-  [0, frames.length / 3 | 0, 2 * frames.length / 3 | 0].forEach(fi => {
+  (samples || [0, frames.length / 3 | 0, 2 * frames.length / 3 | 0]).forEach(fi => {
     const d = frames[fi];
     for (let i = 0; i < d.length; i += 12) { const r = d[i], g = d[i + 1], b = d[i + 2], k = (r >> 4 << 8) | (g >> 4 << 4) | (b >> 4); cnt[k]++; sr[k] += r; sg[k] += g; sb[k] += b; }
   });
@@ -491,7 +596,7 @@ async function encodeGif(frames, W, H, delay, onProgress) {
       let m = map[k]; if (m < 0) m = map[k] = nearest(r, g, b); idx[i] = m;
     }
     const fh = []; const w = n => fh.push(n & 255, n >> 8);
-    fh.push(0x21, 0xF9, 4, 0); w(delay); fh.push(0, 0, 0x2C); w(0); w(0); w(W); w(H); fh.push(0);
+    fh.push(0x21, 0xF9, 4, 0); w(Array.isArray(delay) ? delay[f] : delay); fh.push(0, 0, 0x2C); w(0); w(0); w(W); w(H); fh.push(0);
     parts.push(Uint8Array.from(fh), gifLZW(idx));
     if (onProgress) { onProgress((f + 1) / frames.length); await new Promise(r => setTimeout(r)); }
   }
@@ -512,6 +617,9 @@ async function buildSouvenir() {
   const make = async p => {
     const mk = layer => { const c = document.createElement("canvas"); c.width = 1080; c.height = 1350; drawSouvenir(c.getContext("2d"), 1080, 1350, p, layer); return c; };
     svLayers = {bg: mk("bg"), bouquet: mk("bouquet")};
+    const bc = document.createElement("canvas"); bc.width = 1080; bc.height = 1350; drawBack(bc.getContext("2d"), 1080, 1350); svBack = bc;
+    const tc = document.createElement("canvas"); tc.width = 1080; tc.height = 1800; drawBack(tc.getContext("2d"), 1080, 1800);   // taller copy so the saved letter is easier to read
+    svBackBlob = await new Promise((res, rej) => tc.toBlob(b => b ? res(b) : rej(new Error("no blob")), "image/png"));
     const c = document.createElement("canvas"); c.width = 1080; c.height = 1350; composeFrame(c.getContext("2d"), 1080, 1350, 0, false);
     return new Promise((res, rej) => c.toBlob(b => b ? res(b) : rej(new Error("no blob")), "image/png"));
   };
@@ -523,7 +631,8 @@ async function openSouvenir() {
   try {
     await makeSouvenir();
     $("#svCanvas").hidden = false; $("#svSave").disabled = false; $("#svGif").disabled = false;
-    $("#svHint").textContent = "Save it as a picture, or as a moving GIF.";
+    $("#svHint").textContent = "Tap the card to turn it over. Save the pictures (front + letter) or two GIFs (the moving bouquet, and one that turns to the letter).";
+    svSide = 0; svFlipP = 0; $("#svFlip").textContent = "💌 Read the letter"; $("#svFlip").disabled = false;
     startSvAnim();
   } catch (e) { $("#svHint").textContent = "Sorry, the picture couldn't be made on this device."; }
 }
@@ -540,28 +649,62 @@ $("#souvenirBtn").onclick = openSouvenir;
 document.addEventListener("keydown", e => { if (e.key === "Escape") $("#souvenir").hidden = true; });
 $("#svClose").onclick = () => { $("#souvenir").hidden = true; };
 $("#souvenir").onclick = e => { if (e.target.id === "souvenir") $("#souvenir").hidden = true; };
+const flipSouvenir = () => { svSide = 1 - svSide; $("#svFlip").textContent = svSide ? "🌸 See the front" : "💌 Read the letter"; };
+$("#svFlip").onclick = flipSouvenir;
+$("#svCanvas").onclick = () => { if (!$("#svFlip").disabled) flipSouvenir(); };
+const UA = navigator.userAgent;
+const isIOS = /iPhone|iPad|iPod/i.test(UA) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const isMobile = isIOS || /Android/i.test(UA);
+const inApp = /FBAN|FBAV|Instagram|Line\/|MicroMessenger|Messenger|TikTok|; wv\)/i.test(UA);   // browsers inside other apps often block downloads
+function showPics(items) {          // plain <img> pictures: press and hold to save works almost everywhere
+  $("#svPicList").innerHTML = "";
+  items.forEach(([b, n]) => {
+    const f = document.createElement("figure"), im = document.createElement("img"), cap = document.createElement("figcaption");
+    im.src = URL.createObjectURL(b); im.alt = n; cap.textContent = n.includes("flip") ? "GIF: the bouquet that turns to the letter" : n.includes("bouquet.gif") ? "GIF: the moving bouquet" : n.includes("letter") ? "The letter" : "The bouquet";
+    f.append(im, cap); $("#svPicList").append(f);
+  });
+  $("#svPics").hidden = false;
+}
+async function shareFiles(items) {
+  const files = items.map(([b, n, t]) => new File([b], n, {type: t}));
+  // the phone's share sheet only on phones; on a computer the share dialog just offers "copy", so we download instead
+  if (isMobile && !inApp && navigator.canShare && navigator.canShare({files})) {
+    try { await navigator.share({files}); return; } catch (e) { if (e.name === "AbortError") return; }
+  }
+  if (inApp || isIOS) { showPics(items); return; }
+  for (const [b, n] of items) { const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = n; document.body.append(a); a.click(); a.remove(); await new Promise(r => setTimeout(r, 600)); }
+}
+$("#svTrouble").onclick = () => {
+  const it = [[svBlob, "birthday-souvenir-front.png", "image/png"], [svBackBlob, "birthday-souvenir-letter.png", "image/png"]];
+  if (svGifs) it.push(...svGifs);
+  if (svBlob && svBackBlob) showPics(it);
+};
+$("#svPicsClose").onclick = () => { $("#svPics").hidden = true; };
 $("#svGif").onclick = async () => {
   const btn = $("#svGif"), label = btn.textContent; btn.disabled = true;
+  const say = p => { btn.textContent = `Making GIFs… ${Math.round(p * 100)}%`; };
   try {
-    const W = 540, H = 675, N = 36, c = document.createElement("canvas"); c.width = W; c.height = H;
-    const g = c.getContext("2d", {willReadFrequently: true}), frames = [];
-    for (let i = 0; i < N; i++) {
-      composeFrame(g, W, H, i / N); frames.push(g.getImageData(0, 0, W, H).data);
-      if (i % 3 === 0) { btn.textContent = `Making GIF… ${Math.round(i / N * 40)}%`; await new Promise(r => setTimeout(r)); }
-    }
-    const blob = await encodeGif(frames, W, H, 7, p => { btn.textContent = `Making GIF… ${40 + Math.round(p * 60)}%`; });
-    await shareOrDownload(blob, "birthday-souvenir.gif", "image/gif");
-  } catch (e) { $("#svHint").textContent = "Sorry, the GIF couldn't be made on this device."; }
+    const W = 540, H = 675, c = document.createElement("canvas"); c.width = W; c.height = H;
+    const g = c.getContext("2d", {willReadFrequently: true}), BG = "#2a1424";
+    // GIF 1: only the front, the bouquet swaying
+    let frames = [];
+    for (let i = 0; i < 36; i++) { composeFrame(g, W, H, i / 36); frames.push(g.getImageData(0, 0, W, H).data); if (i % 4 === 0) { say(i / 36 * .25); await new Promise(r => setTimeout(r)); } }
+    const gif1 = await encodeGif(frames, W, H, 7, p => say(.25 + p * .25), [0, 12, 24]);
+    // GIF 2: the front, then it turns to the letter and back
+    frames = []; const delays = [], add = (draw, d) => { draw(); frames.push(g.getImageData(0, 0, W, H).data); delays.push(d); };
+    for (let i = 0; i < 24; i++) { add(() => composeFrame(g, W, H, i / 24), 7); if (i % 4 === 0) { say(.5 + i / 24 * .1); await new Promise(r => setTimeout(r)); } }
+    for (let k = 1; k <= 8; k++) add(() => flipFrame(g, W, H, 0, k / 9, BG), 6);
+    add(() => flipFrame(g, W, H, 0, 1, BG), 300);                                       // the letter stays for 3 seconds
+    for (let k = 1; k <= 8; k++) add(() => flipFrame(g, W, H, 0, 1 - k / 9, BG), 6);
+    const gif2 = await encodeGif(frames, W, H, delays, p => say(.6 + p * .4), [0, 12, 28, 32]);
+    svGifs = [[gif1, "birthday-souvenir-bouquet.gif", "image/gif"], [gif2, "birthday-souvenir-flip-to-letter.gif", "image/gif"]];
+    await shareFiles(svGifs);
+  } catch (e) { $("#svHint").textContent = "Sorry, the GIFs couldn't be made on this device."; }
   btn.textContent = label; btn.disabled = false;
 };
 $("#svSave").onclick = async () => {
-  if (!svBlob) return;
-  const file = new File([svBlob], "birthday-souvenir.png", {type: "image/png"});
-  if (navigator.canShare && navigator.canShare({files: [file]})) {
-    try { await navigator.share({files: [file], title: "Birthday souvenir"}); return; } catch (e) { if (e.name === "AbortError") return; }
-  }
-  const a = document.createElement("a"); a.href = URL.createObjectURL(svBlob); a.download = "birthday-souvenir.png";
-  document.body.append(a); a.click(); a.remove();
+  if (!svBlob || !svBackBlob) return;
+  await shareFiles([[svBlob, "birthday-souvenir-front.png", "image/png"], [svBackBlob, "birthday-souvenir-letter.png", "image/png"]]);
 };
 
 // date lock + countdown on the first page, with a celebration when the date arrives
@@ -604,6 +747,27 @@ function tickCountdown() {
 }
 const cdT = setInterval(tickCountdown, 250); tickCountdown();
 
+// gift opening animation when she presses Open on the first page
+let giftBusy = false;
+function playGift(done) {
+  if (giftBusy) return;
+  if (matchMedia("(prefers-reduced-motion:reduce)").matches) { done(); return; }
+  giftBusy = true;
+  const g = $("#gift"), box = g.querySelector(".gbox"), T = []; let ended = false;
+  g.className = ""; box.className = "gbox"; g.hidden = false; void g.offsetWidth; g.classList.add("on");
+  const at = (ms, fn) => T.push(setTimeout(fn, ms));
+  const finish = () => {
+    if (ended) return; ended = true; T.forEach(clearTimeout);
+    g.classList.add("out"); done();
+    setTimeout(() => { g.hidden = true; g.className = ""; giftBusy = false; }, 800);
+  };
+  at(900, () => box.classList.add("shake"));
+  at(1900, () => { box.classList.remove("shake"); g.classList.add("open"); burst(); hearts(26); });
+  at(2900, () => g.classList.add("flash"));
+  at(3500, finish);
+  g.onclick = null;                                     // not skippable: the whole animation plays
+}
+
 // fullscreen (starts from the first tap; iPhone Safari does not allow it)
 function goFullscreen() {
   const d = document.documentElement, f = d.requestFullscreen || d.webkitRequestFullscreen;
@@ -643,6 +807,6 @@ $("#afterLine").onclick = () => {
   $("#storyNote").classList.remove("locked");
   $("#reasonsNote").hidden = false;
   show(2);
-  setTimeout(() => sc.scrollTo({top: sc.scrollHeight, behavior: "smooth"}), 600);   // auto-scroll down to "Why 22?"
+  guidedStory();                                                     // slow auto-scroll through every moment, down to "Why 22?"
 };
 show(0, false);
