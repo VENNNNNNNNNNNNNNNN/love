@@ -19,8 +19,9 @@ birthdayFrom: "From: Raiven ❤️",
   backTitle: "A letter for you",         // title on the back of the souvenir (the letter side)
   souvenirDate: "October 7, 2026",
   souvenirFrom: "From Raiven",
-  storyMove: 300,    // how long the auto-scroll takes to move from one moment to the next (ms)
-  storyHold: 300,    // how long it rests on each moment (ms); videos rest 600 ms longer
+  giftPhotos: null,   // pictures that fly out of the gift: a list like ["assets/images/photo1.jpg", ...] (null = 10 from the timeline)
+  storyMove: 250,    // how long the auto-scroll takes to move from one moment to the next (ms)
+  storyHold: 250,    // how long it rests on each moment (ms); videos rest 600 ms longer
   typeSpeed: 40,     // letter typing: milliseconds per character (higher = slower)
   musicVolume: 0.6,  // normal song volume (0 to 1)
   duckVolume: 0.12,  // song volume while the voice note plays
@@ -52,7 +53,7 @@ birthdayFrom: "From: Raiven ❤️",
     // To use a video instead of a photo (plays when it's on screen):
     // {title: "Us", video: "assets/videos/clip1.mp4", caption: "Press the speaker to hear it."}
   ],
-  storyEnd: {title: "Why 22?", count: 22, text: "22 moments, because you're turning 22."},
+  storyEnd: {title: "Why?", count: 22, text: "22 moments, because you're turning 22."},
   reasonsEnd: {title: "Why?", count: 7, text: "7 reasons, because your birthday is on the 7th."},
   reasons: [
     "You make ordinary days feel special.",
@@ -63,7 +64,7 @@ birthdayFrom: "From: Raiven ❤️",
     "Your kindness and how gently you treat the world around you.",
     "Most importantly the way you are."
   ],
-  letter: "Happy birthday sa pinakamagandang regalong dumating sa buhay ko ayieee AHAHAH, love. Hindi ko explain kung gaano ako kaswerte na ikaw ang kasama ko ngayon. Ikaw ang nagpapasaya sa bawat araw ko sa simpleng mga paraan lang tulad ng laging pagiintindi ng sitwasyon ko. Sobrang natutuwa ako kapag nakikita ko kung paano ka ma excite tungkol sa pagkain wag lang lagi sa matamis. Ang sarap sa pakiramdam na nandayn ka parati sa tabi ko Kahit ano mang mangyari. At syempre, hinding-hindi ko pagsasawaan ang tawa mo na walang katulad na may backfire AHAHA. Punong-puno ka talaga ng mga surprise na laging nagpapasaya hindi lang sakin pati mga nakapaligid sayo. Sana ngayong special na araw mo, maramdaman mo kung gaano ka kahalaga sa akin, love.\n\nMaraming salamat sa lahat ng pag-aalala at pagmamahal na binibigay mo sa araw araw. Pinapangako ko na nandito lang ako para sumuporta sa lahat ng pangarap mo sa buhay. Susuportahan kita sa bawat hakbang, tulad ng pagsuporta mo sa akin noon pa, love. Kahit anong pagsubok ang dumating, alam kong kakayanin natin basta magkasama tayo. Pinapahalagahan ko ang bawat segundo, oras, at araw na magkasama tayong dalawa. Ikaw ang paborito kong tao sa mundong ito na punong-puno ng ibat ibang ugali. Sana ay matupad ang lahat ng mga wish mo ngayong araw, love.\n\nDeserve mo lahat ng magagandang bagay na nangyayari at darating sa buhay mo. Hinding-hindi ako magsasawang kainin ang masasarap mo na luto pati ikaw jk AHAHA. Salamat dahil ikaw ang naging tahanan ko at sandigan sa panahong kailangan ko ng karamay. Sana ay masaya ka ngayong araw dahil ginawa ko ang lahat para mapangiti ka, love. Sana ma appreciate ang munti kong regalo pasensya na talaga babawi ako sa susunod. Again, Salamat love sa lahat ng pagmamahal, pagiintindi, pag-aalala at pagsama Kahit may mabigat na pagsubok na dumaan. Happy, happy birthday ulit sa iyo, loveee, mahal na mahal kita nang buong-buo.",
+  letter: "Happy birthday sa pinakamagandang regalong dumating sa buhay ko ayieee AHAHAHA, love. Hindi ko explain kung gaano ako kaswerte na ikaw ang kasama ko ngayon. Ikaw ang nagpapasaya sa bawat araw ko sa simpleng mga paraan lang tulad ng laging pagiintindi ng sitwasyon ko. Sobrang natutuwa ako kapag nakikita ko kung paano ka ma excite tungkol sa pagkain wag lang lagi sa matamis. Ang sarap sa pakiramdam na nandayn ka parati sa tabi ko Kahit ano mang mangyari. At syempre, hinding-hindi ko pagsasawaan ang tawa mo na walang katulad na may backfire AHAHA. Punong-puno ka talaga ng mga surprise na laging nagpapasaya hindi lang sakin pati mga nakapaligid sayo. Sana ngayong special na araw mo, maramdaman mo kung gaano ka kahalaga sa akin, love.\n\nMaraming salamat sa lahat ng pag-aalala at pagmamahal na binibigay mo sa araw araw. Pinapangako ko na nandito lang ako para sumuporta sa lahat ng pangarap mo sa buhay. Susuportahan kita sa bawat hakbang, tulad ng pagsuporta mo sa akin noon pa, love. Kahit anong pagsubok ang dumating, alam kong kakayanin natin basta magkasama tayo. Pinapahalagahan ko ang bawat segundo, oras, at araw na magkasama tayong dalawa. Ikaw ang paborito kong tao sa mundong ito na punong-puno ng ibat ibang ugali. Sana ay matupad ang lahat ng mga wish mo ngayong araw, love.\n\nDeserve mo lahat ng magagandang bagay na nangyayari at darating sa buhay mo. Hinding-hindi ako magsasawang kainin ang masasarap mo na luto pati ikaw jk AHAHA. Salamat dahil ikaw ang naging tahanan ko at sandigan sa panahong kailangan ko ng karamay. Sana ay masaya ka ngayong araw dahil ginawa ko ang lahat para mapangiti ka, love. Sana ma appreciate ang munti kong regalo pasensya na talaga babawi ako sa susunod. Again, Salamat love sa lahat ng pagmamahal, pagiintindi, pag-aalala at pagsama Kahit may mabigat na pagsubok na dumaan. Happy, happy birthday ulit sa iyo, loveee, mahal na mahal kita nang buong-buo.",
   letterReveal: [
     {n: 22, label: "sentences", why: "because you're turning 22"},
     {n: 7, label: "love words", why: "because your birthday is on October 7"},
@@ -124,7 +125,7 @@ const media = m => m.video
      </div>`
   : `<div class="photo"><img src="${m.img}" data-base="${m.img.replace(/\.\w+$/, "")}" data-orig="${m.img.split(".").pop().toLowerCase()}" data-n="0" alt="" loading="lazy" onerror="nextExt(this)">📸</div>`;
 $("#timeline").innerHTML = CONFIG.timeline.map((m, i) => `
-  <div class="moment"><h3><span class="num">${i + 1} / ${CONFIG.timeline.length}</span> ${m.title}</h3>${media(m)}<p>${m.caption}</p></div>`).join("") +
+  <div class="moment"><h3>${m.title}</h3>${media(m)}<p>${m.caption}</p></div>`).join("") +
   `<div class="moment end locked" id="storyNote" data-to="${CONFIG.storyEnd.count}" data-ms="170"><h3>${CONFIG.storyEnd.title}</h3><div class="count">0</div><p>${CONFIG.storyEnd.text}</p></div>`;
 // hide the camera emoji when a real image loads
 document.querySelectorAll(".photo img").forEach(i => i.onload = () => i.parentNode.style.fontSize = 0);
@@ -174,7 +175,7 @@ function show(n, push = true) {
   if (n === 3 && round === 2 && !reasonsGuided) { reasonsGuided = true; guidedReasons(); }
   if (n === 4 && round === 2) startLoveGame();
   if (n === 5) {
-    burst(); $("#afterLine").hidden = round === 2; $("#voiceBtn").hidden = !(voiceOK && gameWon);
+    burst(); hearts(30); $("#afterLine").hidden = round === 2; $("#voiceBtn").hidden = !(voiceOK && gameWon);
     $("#souvenirBtn").hidden = !gameWon;
     if (round === 2 && gameWon && !svShown) { svShown = true; setTimeout(openSouvenir, 1200); }   // pops up once after the minigame
   }
@@ -212,17 +213,23 @@ function tweenScroll(el, to, ms) {
   });
 }
 async function waitFor(fn, max = 20000) { const t0 = Date.now(); while (!fn() && Date.now() - t0 < max) await wait(200); }
+function countPop(n) {                    // "Count it!" 1, 2, 3 ... pops on screen
+  const el = $("#countPop"); el.hidden = false; el.querySelector("b").textContent = n;
+  el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop");
+}
 async function guidedStory() {            // round 2: the page scrolls by itself, moment by moment, down to "Why 22?"
   const sc = $("#s2"), btn = sc.querySelector(".btn"); lockNav(true); btn.disabled = true; sc.classList.add("auto");
   await wait(600);
+  let count = 0;
   for (const m of sc.querySelectorAll("#timeline .moment")) {
     const r = m.getBoundingClientRect(), s = sc.getBoundingClientRect();
     await tweenScroll(sc, Math.max(0, sc.scrollTop + (r.top - s.top) - (sc.clientHeight - m.offsetHeight) / 2), CONFIG.storyMove);
+    if (m.id === "storyNote") $("#countPop").hidden = true; else countPop(++count);
     await wait(CONFIG.storyHold + (m.querySelector("video") ? 600 : 0));
   }
   await waitFor(() => $("#storyNote").classList.contains("done")); await wait(900);
   await tweenScroll(sc, sc.scrollHeight, 600);
-  sc.classList.remove("auto"); btn.disabled = false; lockNav(false);
+  $("#countPop").hidden = true; sc.classList.remove("auto"); btn.disabled = false; lockNav(false);
 }
 async function guidedReasons() {          // round 2: scrolls down by itself to "Why 7?" and waits for the count
   const sc = $("#s3"), btn = sc.querySelector(".btn"); lockNav(true); btn.disabled = true; sc.classList.add("auto");
@@ -285,10 +292,11 @@ $("#letterText").onclick = e => {
 };
 $("#envelope").onclick = () => {
   $("#envWrap").hidden = true; $("#letter").hidden = false;
-  const el = $("#letterText"); let i = 0; typingOn = true; clearTimeout(typing); lockNav(true);
+  const el = $("#letterText"), lt = $("#letter"); let i = 0, away = false; typingOn = true; clearTimeout(typing); lockNav(true);
+  lt.addEventListener("scroll", () => { away = lt.scrollHeight - lt.scrollTop - lt.clientHeight > 120; }, {passive: true});   // she scrolled up: stop following
   const step = () => {                       // types one character at a time, pausing at commas, sentences and paragraphs
     i++; el.textContent = CONFIG.letter.slice(0, i);
-    if (i % 6 === 0) el.scrollIntoView({block: "end"});
+    if (i % 6 === 0 && !away) { lt.scrollTop = lt.scrollHeight; }          // follows the text only while she is near the bottom
     if (i >= CONFIG.letter.length) return finishTyping();
     const ch = CONFIG.letter[i - 1];
     const pause = ch === "\n" ? 500 : ".!?".includes(ch) ? 320 : ch === "," ? 120 : 0;
@@ -297,7 +305,6 @@ $("#envelope").onclick = () => {
   typing = setTimeout(step, 400);
 };
 
-$("#secret").onclick = () => { $("#secretWrap").hidden = true; $("#final").hidden = false; burst(); hearts(30); };
 
 // hearts + confetti (kept light for older phones)
 function hearts(n) {
@@ -726,6 +733,7 @@ function celebrate() {
   btn.disabled = false; btn.textContent = "🔓 Unlocked!"; btn.classList.add("unlocked");
   setTimeout(() => { btn.textContent = "Open 💌"; }, 1400);
   overlay(CONFIG.unlockText, true); burst(); hearts(30);
+  preloadGift();
   setTimeout(burst, 700); setTimeout(() => { burst(); hearts(20); }, 1500);
   setTimeout(() => { $("#cdOverlay").hidden = true; }, 4500);
 }
@@ -748,6 +756,39 @@ function tickCountdown() {
 }
 const cdT = setInterval(tickCountdown, 250); tickCountdown();
 
+// pictures that fly out of the gift box and make a heart
+let giftImgs = null;
+function preloadGift() {
+  if (giftImgs) return giftImgs;
+  const all = CONFIG.timeline.filter(m => m.img).map(m => m.img);
+  const list = CONFIG.giftPhotos || Array.from({length: Math.min(10, all.length)}, (_, i) => all[Math.floor(i * all.length / Math.min(10, all.length))]);
+  return giftImgs = Promise.all(list.map(loadAny)).then(a => a.filter(Boolean));
+}
+function launchPics(list) {
+  if (!giftBusy || !list.length) return;
+  const wrap = $("#gpics"), vw = innerWidth, vh = innerHeight, n = Math.min(list.length, 12); wrap.innerHTML = "";
+  const bx = $("#gift .gbox").getBoundingClientRect(), ox = bx.left + bx.width / 2, oy = bx.top + bx.height * .35;
+  const cw = Math.max(54, Math.min(vw * .17, vh * .13, 112)), ch = cw * 1.22;
+  const s = Math.min(vw * .8, vh * .6) / 34, hx = vw / 2, hy = vh * .42;
+  // points spaced evenly along the heart outline (by length), so the pictures never pile up
+  const pts = [], M = 600, H = k => { const t = Math.PI * 2 * k / M; return [16 * Math.sin(t) ** 3, -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t))]; };
+  let total = 0; const cum = [0]; for (let k = 1; k <= M; k++) { const a = H(k - 1), b = H(k); total += Math.hypot(b[0] - a[0], b[1] - a[1]); cum.push(total); }
+  const at = f => { let k = 0; while (k < M && cum[k] < f * total) k++; return H(k); };
+  const cap = $("#gift .gcap"); cap.innerHTML = `Happy Birthday<br>${CONFIG.name}`; cap.style.top = hy + "px";   // the heart is centred on this point
+  for (let i = 0; i < n; i++) {
+    const [hxu, hyu] = at((i + .5) / n);
+    const dx = hx + hxu * s - ox, dy = hy + (hyu - 2.5) * s - oy, r = ((i * 37) % 29) - 14, peak = vh * (.22 + (i % 3) * .05);
+    const el = document.createElement("div"), im = document.createElement("img");
+    el.className = "gp"; el.style.cssText = `width:${cw}px;height:${ch}px;left:${ox}px;top:${oy}px`; im.src = list[i].src; el.append(im); wrap.append(el);
+    const base = "translate(-50%,-50%) ";
+    el.animate([
+      {transform: base + "translate(0,0) scale(.2) rotate(0deg)", opacity: 0},
+      {transform: base + `translate(${dx * .35}px,${-peak}px) scale(1.15) rotate(${r * 1.6}deg)`, opacity: 1, offset: .45},
+      {transform: base + `translate(${dx}px,${dy}px) scale(1) rotate(${r}deg)`, opacity: 1}
+    ], {duration: 1000, delay: i * 90, easing: "cubic-bezier(.2,.8,.3,1)", fill: "forwards"});
+  }
+}
+
 // gift opening animation when she presses Open on the first page
 let giftBusy = false;
 function playGift(done) {
@@ -755,17 +796,20 @@ function playGift(done) {
   if (matchMedia("(prefers-reduced-motion:reduce)").matches) { done(); return; }
   giftBusy = true;
   const g = $("#gift"), box = g.querySelector(".gbox"), T = []; let ended = false;
-  g.className = ""; box.className = "gbox"; g.hidden = false; void g.offsetWidth; g.classList.add("on");
+  g.className = ""; box.className = "gbox"; $("#gpics").innerHTML = ""; g.hidden = false; void g.offsetWidth; g.classList.add("on");
+  preloadGift();
   const at = (ms, fn) => T.push(setTimeout(fn, ms));
   const finish = () => {
     if (ended) return; ended = true; T.forEach(clearTimeout);
     g.classList.add("out"); done();
+    setTimeout(() => { $("#gpics").innerHTML = ""; }, 800);
     setTimeout(() => { g.hidden = true; g.className = ""; giftBusy = false; }, 800);
   };
   at(900, () => box.classList.add("shake"));
-  at(1900, () => { box.classList.remove("shake"); g.classList.add("open"); burst(); hearts(26); });
-  at(2900, () => g.classList.add("flash"));
-  at(3500, finish);
+  at(1900, () => { box.classList.remove("shake"); g.classList.add("open"); burst(); hearts(26); preloadGift().then(launchPics); });
+  at(3600, () => g.classList.add("formed"));       // the pictures have made a heart: "Happy Birthday" appears
+  at(5000, () => g.classList.add("flash"));
+  at(5600, finish);
   g.onclick = null;                                     // not skippable: the whole animation plays
 }
 
@@ -810,4 +854,5 @@ $("#afterLine").onclick = () => {
   show(2);
   guidedStory();                                                     // slow auto-scroll through every moment, down to "Why 22?"
 };
+if (!isLocked()) preloadGift();              // get the gift pictures ready in the background once the page is unlocked
 show(0, false);
