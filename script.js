@@ -19,7 +19,8 @@ birthdayFrom: "From: Raiven ❤️",
   backTitle: "A letter for you",         // title on the back of the souvenir (the letter side)
   souvenirDate: "October 7, 2026",
   souvenirFrom: "From Raiven",
-  storyHold: 1300,   // how long the auto-scroll rests on each moment (ms)
+  storyMove: 300,    // how long the auto-scroll takes to move from one moment to the next (ms)
+  storyHold: 300,    // how long it rests on each moment (ms); videos rest 600 ms longer
   typeSpeed: 40,     // letter typing: milliseconds per character (higher = slower)
   musicVolume: 0.6,  // normal song volume (0 to 1)
   duckVolume: 0.12,  // song volume while the voice note plays
@@ -213,14 +214,14 @@ function tweenScroll(el, to, ms) {
 async function waitFor(fn, max = 20000) { const t0 = Date.now(); while (!fn() && Date.now() - t0 < max) await wait(200); }
 async function guidedStory() {            // round 2: the page scrolls by itself, moment by moment, down to "Why 22?"
   const sc = $("#s2"), btn = sc.querySelector(".btn"); lockNav(true); btn.disabled = true; sc.classList.add("auto");
-  await wait(900);
+  await wait(600);
   for (const m of sc.querySelectorAll("#timeline .moment")) {
     const r = m.getBoundingClientRect(), s = sc.getBoundingClientRect();
-    await tweenScroll(sc, Math.max(0, sc.scrollTop + (r.top - s.top) - (sc.clientHeight - m.offsetHeight) / 2), 1000);
-    await wait(CONFIG.storyHold);
+    await tweenScroll(sc, Math.max(0, sc.scrollTop + (r.top - s.top) - (sc.clientHeight - m.offsetHeight) / 2), CONFIG.storyMove);
+    await wait(CONFIG.storyHold + (m.querySelector("video") ? 600 : 0));
   }
-  await waitFor(() => $("#storyNote").classList.contains("done")); await wait(1200);
-  await tweenScroll(sc, sc.scrollHeight, 700);
+  await waitFor(() => $("#storyNote").classList.contains("done")); await wait(900);
+  await tweenScroll(sc, sc.scrollHeight, 600);
   sc.classList.remove("auto"); btn.disabled = false; lockNav(false);
 }
 async function guidedReasons() {          // round 2: scrolls down by itself to "Why 7?" and waits for the count
