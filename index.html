@@ -16,6 +16,7 @@
 <body>
 <canvas id="confetti"></canvas>
 <div id="cdOverlay" hidden></div>
+<div id="countPop" hidden><small>Count it!</small><b>1</b></div>
 <div id="gift" hidden>
   <div class="rays"></div>
   <div class="gbox">
@@ -24,6 +25,8 @@
     <div class="glid"><b class="gribV"></b><i class="bow bl"></i><i class="bow br"></i><i class="gknot"></i></div>
   </div>
   <p class="gtext">Opening your gift…</p>
+  <div id="gpics"></div>
+  <div class="gcap"></div>
   <div class="gflash"></div>
 </div>
 <div id="hearts"></div>
@@ -39,7 +42,7 @@
   <section class="screen" id="s0">
     <p class="small">Hey, you… 👀</p>
     <h1>I made something for you.</h1>
-    <p>Find somewhere comfortable and turn your volume up a little 🔊. Please don't skip anything.</p>
+    <p>Find somewhere comfortable and turn your volume up a little. Please don't skip anything.</p>
     <div id="countdown" hidden>
       <p class="small" id="cdLabel"></p>
       <div id="cdTimer"></div>
@@ -91,8 +94,7 @@
 
   <!-- 6 Final -->
   <section class="screen" id="s5">
-    <div id="secretWrap"><button class="btn ghost" id="secret">There is one more thing…</button></div>
-    <div id="final" hidden>
+    <div id="final">
       <p id="finalLines"></p>
       <h1>Happy birthday ❤️</h1>
       <p class="big">🎂 🎉 ✨</p>
